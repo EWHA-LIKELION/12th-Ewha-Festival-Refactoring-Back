@@ -4,7 +4,7 @@ from accounts.models import User
 
 # Create your models here.
 
-class Booths(models.Model):
+class Booth(models.Model):
     PLACE_CHOICES = [ #부스 지도 참고... 
         ('교육관', '교육관'),
         ('학문관', '학문관'),
@@ -23,12 +23,12 @@ class Booths(models.Model):
         #공연
         ('학문관광장', '학문관광장'),
         ('스포츠트랙', '스포츠트랙')]
-    
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE, related_name='booths')
     name = models.CharField(max_length=20, unique=True)
-    thumnail = models.ImageField(upload_to='thumbnail', null=False) #upload_to: 업로드된 이미지 모아둘 경로
+    thumbnail = models.ImageField(upload_to='thumbnail', null=False) #upload_to: 업로드된 이미지 모아둘 경로
     place = models.CharField(max_length=20, choices=PLACE_CHOICES, null=False)
-    date = models.DateTimeField(auto_now_add=False, auto_now=False)
+    #date = models.CharField(max_length=20, choices=DATE_CHOICES, null=False)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, null=False)
     phonenum = models.IntegerField(null= False, unique=True)
     is_opened = models.BooleanField(default=True) #default: 부스 운영중
@@ -37,14 +37,16 @@ class Booths(models.Model):
 
     def __str__(self):
         return self.name
-    
-class Menus(models.Model):
+
+#운영시간 : 10일 수요일 10시~15시/ 11일 목요일 10시~15시
+
+class Menu(models.Model):
 
     VEGAN_CHOICES = [
         ('페스코', '페스코'),
         ('비건', '비건'),
         ('None', 'None')]
-    booth = models.ForeignKey(Booths, on_delete=models.CASCADE, related_name='menus')
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='menus')
     menu= models.CharField(max_length=20, unique=False)
     price = models.IntegerField(null= False, unique=False)
     img = models.ImageField(upload_to='menu_img', null=False)
