@@ -35,6 +35,9 @@ class Booth(models.Model):
     Field = models.TextField(null=True) #소개글 
     is_show = models.BooleanField(default=False) #default: 부스
 
+    #스크랩 수
+    scrap_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
 
@@ -77,13 +80,6 @@ class Booth_notice(models.Model):
     def __str__(self):
         return self.content
     
-# class Guestbook(models.Model):
-    # 작성자
+class Booth_scrap(models.Model):
 
-    # 부스
-
-    # 내용
-
-    # 작성 시간
-
-    # 수정 시간
+    
