@@ -82,7 +82,8 @@ class Booth_notice(models.Model):
 
     def __str__(self):
         return self.content
-    
+
+#방명록 모델
 class Guestbook(models.Model):
     # 작성자(외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'guestbook')
@@ -96,6 +97,7 @@ class Guestbook(models.Model):
     def __str__(self) :
         return self.content
     
+#답글 모델
 class Reply(models.Model):
     # 작성자(외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reply')
