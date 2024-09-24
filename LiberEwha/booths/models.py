@@ -82,7 +82,8 @@ class Booth_notice(models.Model):
 
     def __str__(self):
         return self.content
-    
+
+# 부스 스크랩 모델
 class Booth_scrap(models.Model):
     # 부스 (외래키)
     booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth")
@@ -90,10 +91,11 @@ class Booth_scrap(models.Model):
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
 
-
+# 메뉴 스크랩 모델
 class Menu_scrap(models.Model):
     # 메뉴 (외래키)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu")
 
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+
