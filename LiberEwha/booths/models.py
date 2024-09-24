@@ -82,7 +82,6 @@ class Booth_notice(models.Model):
 
     def __str__(self):
         return self.content
-<<<<<<< HEAD
     
 class Guestbook(models.Model):
     # 작성자(외래키)
@@ -109,7 +108,6 @@ class Reply(models.Model):
 
     def __str__(self) :
         return self.content
-=======
 
 # 부스 스크랩 모델
 class Booth_scrap(models.Model):
@@ -126,4 +124,3 @@ class Menu_scrap(models.Model):
 
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
->>>>>>> c98f18f6e8c900e060cd5f8f7d0336a421981e8c
