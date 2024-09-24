@@ -77,13 +77,28 @@ class Booth_notice(models.Model):
     def __str__(self):
         return self.content
     
-# class Guestbook(models.Model):
-    # 작성자
-
-    # 부스
-
+class Guestbook(models.Model):
+    # 작성자(외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'guestbook')
+    # 부스(외래키)
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='guestbook')
     # 내용
-
+    content = models.CharField()
     # 작성 시간
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    # 수정 시간
+    def __str__(self) :
+        return self.content
+    
+class Reply(models.Model):
+    # 작성자(외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reply')
+    # 방명록(외래키)
+    guestbook = models.ForeignKey(Guestbook, on_delete=models.CASCADE, related_name='reply')
+    # 내용
+    content = models.CharField()
+    # 작성 시간
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) :
+        return self.content
