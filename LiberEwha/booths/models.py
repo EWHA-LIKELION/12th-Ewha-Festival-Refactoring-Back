@@ -90,7 +90,7 @@ class Guestbook(models.Model):
     # 부스(외래키)
     booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='guestbook')
     # 내용
-    content = models.CharField()
+    content = models.CharField(max_length=200)
     # 작성 시간
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -104,7 +104,7 @@ class Reply(models.Model):
     # 방명록(외래키)
     guestbook = models.ForeignKey(Guestbook, on_delete=models.CASCADE, related_name='reply')
     # 내용
-    content = models.CharField()
+    content = models.CharField(max_length=200)
     # 작성 시간
     created_at = models.DateTimeField(auto_now_add=True)
 
