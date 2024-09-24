@@ -112,3 +112,16 @@ class Guestbook(models.Model):
 
     # 작성 시간
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Reply(models.Model):
+    # 작성자 (외래키)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+
+    # 답글 내용
+    content = models.CharField(null=False)
+
+    # 작성시간
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # 방명록
+    guestbook = models.ForeignKey(Guestbook, on_delete=models.CASCADE, related_name="guestbook")
