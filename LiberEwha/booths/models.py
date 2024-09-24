@@ -35,6 +35,9 @@ class Booth(models.Model):
     Field = models.TextField(null=True) #소개글 
     is_show = models.BooleanField(default=False) #default: 부스
 
+    #스크랩 수
+    scrap_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
 
@@ -52,6 +55,46 @@ class Menu(models.Model):
     img = models.ImageField(upload_to='menu_img', null=False)
     is_vegan = models.CharField(max_length=10, choices=VEGAN_CHOICES, default='None', null=False)
 
+    # 메뉴 스크랩 수
+    scrap_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.menu
     #여기서 related_name은 Booth 모델에서 해당 부스에 연결된 모든 메뉴를 참조할 때 사용할 수 있는 이름을 지정한 것
+
+# 부스 공지 모델
+class Booth_notice(models.Model):
+    NOTICE_TYPE = [
+        ('판매공지', '판매공지'),
+        ('운영공지', '운영공지')
+    ]
+    # 공지 타입
+    notice_type = models.CharField(choices=NOTICE_TYPE)
+
+    # 공지 내용
+    content = models.CharField(null=False)
+
+    # 공지 생성 시간(자동)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # 부스(외래키)
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='booth')
+
+    def __str__(self):
+        return self.content
+
+# 부스 스크랩 모델
+class Booth_scrap(models.Model):
+    # 부스 (외래키)
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth")
+
+    # 유저 (외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+
+# 메뉴 스크랩 모델
+class Menu_scrap(models.Model):
+    # 메뉴 (외래키)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu")
+
+    # 유저 (외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
