@@ -81,5 +81,9 @@ class Booth_notice(models.Model):
         return self.content
     
 class Booth_scrap(models.Model):
+    # 부스 (외래키)
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth")
 
+    # 유저 (외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
     
