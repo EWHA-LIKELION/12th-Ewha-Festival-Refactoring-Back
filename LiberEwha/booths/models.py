@@ -72,7 +72,7 @@ class Booth_notice(models.Model):
     notice_type = models.CharField(choices=NOTICE_TYPE)
 
     # 공지 내용
-    content = models.CharField()
+    content = models.CharField(null=False)
 
     # 공지 생성 시간(자동)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -99,3 +99,16 @@ class Menu_scrap(models.Model):
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
 
+# 방명록 모델
+class Guestbook(models.Model):
+    # 부스 (외래키)
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth")
+
+    # 작성자 (외래키)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+
+    # 내용
+    content = models.CharField(null=False)
+
+    # 작성 시간
+    created_at = models.DateTimeField(auto_now_add=True)
