@@ -69,16 +69,16 @@ class Booth_notice(models.Model):
         ('운영공지', '운영공지')
     ]
     # 공지 타입
-    notice_type = models.CharField(choices=NOTICE_TYPE)
+    notice_type = models.CharField(max_length=10, choices=NOTICE_TYPE)
 
     # 공지 내용
-    content = models.CharField(null=False)
+    content = models.CharField(max_length=500, null=False)
 
     # 공지 생성 시간(자동)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # 부스(외래키)
-    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='booth')
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name='notice')
 
     def __str__(self):
         return self.content
@@ -114,15 +114,15 @@ class Reply(models.Model):
 # 부스 스크랩 모델
 class Booth_scrap(models.Model):
     # 부스 (외래키)
-    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth")
+    booth = models.ForeignKey(Booth, on_delete=models.CASCADE, related_name="booth_scrap")
 
     # 유저 (외래키)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="booth_scrap")
 
 # 메뉴 스크랩 모델
 class Menu_scrap(models.Model):
     # 메뉴 (외래키)
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu")
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu_scrap")
 
     # 유저 (외래키)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="menu_scrap")
