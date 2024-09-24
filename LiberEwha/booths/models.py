@@ -55,6 +55,9 @@ class Menu(models.Model):
     img = models.ImageField(upload_to='menu_img', null=False)
     is_vegan = models.CharField(max_length=10, choices=VEGAN_CHOICES, default='None', null=False)
 
+    # 메뉴 스크랩 수
+    scrap_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.menu
     #여기서 related_name은 Booth 모델에서 해당 부스에 연결된 모든 메뉴를 참조할 때 사용할 수 있는 이름을 지정한 것
@@ -86,4 +89,11 @@ class Booth_scrap(models.Model):
 
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
-    
+
+
+class Menu_scrap(models.Model):
+    # 메뉴 (외래키)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu")
+
+    # 유저 (외래키)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
