@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
 from .models import *
 
 
@@ -29,3 +30,32 @@ class MenuDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
         fields = ['id', 'menu', 'price', 'img', 'is_soldout', 'is_vegan']
+
+
+class ReplySerializer(serializers.ModelSerializer):
+    reply_id = serializers.IntegerField(source='id', read_only=True)
+    class Meta:
+        model = Reply
+        fields = ['reply_id','content']
+
+    def create(self,validated_data):
+        request = self.context.get('request')
+        guestbook_id = self.context.get('guestbook_id')
+        validated_data['user'] = request.user
+        validated_data['guestbook'] = get_object_or_404(Guestbook, id=guestbook_id)
+        return super().create(validated_data)
+    
+class GuestBookSerializer(serializers.ModelSerializer):
+    guestbook_id = serializers.IntegerField(source='id', read_only=True)
+    reply = ReplySerializer(many=True, read_only=True)
+    class Meta:
+        model = Guestbook
+        fields = ['guestbook_id','content', 'reply']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        booth_id = self.context.get('booth_id')
+        validated_data['user'] = request.user
+        validated_data['booth'] = get_object_or_404(Booth, id=booth_id)
+        return super().create(validated_data)
+
