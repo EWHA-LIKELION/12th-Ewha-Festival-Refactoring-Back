@@ -25,18 +25,22 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
     serializer_class = BoothsMainSerializer
 
     def get(self, request):
-        category = request.data.get('category')
-        place = request.data.get('place')
-        date = request.data.get('date')
-        is_show= request.data.get('is_show')
+        category = request.GET.get('category')
+        place = request.GET.get('place')
+        dayofweek = request.GET.get('dayofweek')
+        is_show= request.GET.get('is_show')
 
-        # 부스 정렬 기준 추가
+        # 부스 정렬 기준
         booths = Booth.objects.all()
-        if is_show and is_show != True:
-            booths = booths.filter(is_show = True)
 
-        if place and place != "null":
-                booths = booths.filter(place=place)
+        if is_show:
+                booths = booths.filter(is_show = False)
+
+        if category:
+                booths = booths.filter(category=category)
+
+        if dayofweek:  # dayofweek가 요청되면
+            booths = booths.filter(dayofweek=dayofweek)
 
         booths = booths.order_by("id") #오름차순 정렬
         serializer = BoothsMainSerializer(booths, many=True)
