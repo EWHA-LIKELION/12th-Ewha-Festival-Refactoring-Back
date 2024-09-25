@@ -34,9 +34,7 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
 
         # 부스 정렬 기준
         booths = Booth.objects.all()
-
-        if is_show:
-                booths = booths.filter(is_show = False)
+        booths = booths.filter(is_show = False)
 
         if category:
                 booths = booths.filter(category=category)

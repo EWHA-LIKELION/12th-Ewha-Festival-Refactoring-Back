@@ -145,12 +145,12 @@ class ReplyManageView(views.APIView):
         return get_object_or_404(Booth, pk=pk)
 
     def post(self, request, pk, guestbook_id, format=None):
-        # 관리자인지 확인
-        if not request.user.is_admin:
+        # 해당 부스의 관리자인지 확인
+        booth = self.get_object(pk)
+        if booth.user != request.user:
             return Response({"error": "해당 부스 관리자만 답글을 달 수 있습니다."}, 
                             status=HTTP_403_FORBIDDEN)
         
-        booth = self.get_object(pk)
         try:
             guestbook_entry = Guestbook.objects.get(id=guestbook_id, booth=booth)
         except Guestbook.DoesNotExist:

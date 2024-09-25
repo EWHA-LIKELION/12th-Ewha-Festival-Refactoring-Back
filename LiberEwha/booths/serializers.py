@@ -57,29 +57,31 @@ class BoothsDetailSerializer(serializers.ModelSerializer):
     
 class ReplySerializer(serializers.ModelSerializer):
     reply_id = serializers.IntegerField(source='id', read_only=True)
+    user_nickname = serializers.CharField(source='user.nickname', read_only=True)
+    guestbook_id = serializers.IntegerField(source='guestbook.id', read_only=True)
     class Meta:
         model = Reply
-        fields = ['reply_id','content']
+        fields = ['guestbook_id','reply_id','user_nickname','content','created_at']
 
     def create(self,validated_data):
         request = self.context.get('request')
-        guestbook_id = self.context.get('guestbook_id')
-        validated_data['user'] = request.user
+        guestbook_id = self.context.get('guestbook_id')  
         validated_data['guestbook'] = get_object_or_404(Guestbook, id=guestbook_id)
+        validated_data['user'] = request.user
         return super().create(validated_data)
     
 class GuestBookSerializer(serializers.ModelSerializer):
     guestbook_id = serializers.IntegerField(source='id', read_only=True)
     reply = ReplySerializer(many=True, read_only=True)
+    user_nickname = serializers.CharField(source='user.nickname', read_only=True)
+    booth_id = serializers.IntegerField(source='booth.id', read_only=True)
     class Meta:
         model = Guestbook
-        fields = ['guestbook_id','content', 'reply']
+        fields = ['booth_id','guestbook_id', 'user_nickname','content','created_at','reply']
 
     def create(self, validated_data):
         request = self.context.get('request')
-        booth_id = self.context.get('booth_id')
         validated_data['user'] = request.user
-        validated_data['booth'] = get_object_or_404(Booth, id=booth_id)
         return super().create(validated_data)
 
 class BoothScrapSerializer(serializers.ModelSerializer):
