@@ -71,11 +71,13 @@ class BoothScrapView(views.APIView):
         if not request.user.is_authenticated:
             return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
         
+        
+        boothScrap = get_object_or_404(Booth_scrap, user=request.user.id, booth=pk)
+        booth = get_object_or_404(Booth, pk=pk)
+
         if not Booth_scrap.objects.filter(booth=booth, user=request.user).exists():
             return Response({"message": "취소할 스크랩이 없습니다."}, status=HTTP_400_BAD_REQUEST)
 
-        boothScrap = get_object_or_404(Booth_scrap, user=request.user.id, booth=pk)
-        booth = get_object_or_404(Booth, pk=pk)
 
         booth.decreaseScrapCount()
         boothScrap.delete()
@@ -114,7 +116,7 @@ class MenuScrapView(views.APIView):
         menuScrap = get_object_or_404(Menu_scrap, user=request.user.id, menu=menu_id)
         menu = get_object_or_404(Menu, pk=menu_id)
 
-        if not Booth_scrap.objects.filter(menu=menu, user=request.user).exists():
+        if not menuScrap.objects.filter(menu=menu, user=request.user).exists():
             return Response({"message": "취소할 스크랩이 없습니다."}, status=HTTP_400_BAD_REQUEST)
 
 
