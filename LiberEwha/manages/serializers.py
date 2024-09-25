@@ -21,7 +21,7 @@ class ManageBoothSerializer(serializers.ModelSerializer):
         model = Booth
         fields = ['id', 'name', 'booth_place', 'category', 
                   'thumbnail', 'admin_contact', 'is_opened', 
-                  'description', 
+                  'description', 'is_show',
                   'menus', 'days']
 
     def get_booth_place(self, obj):

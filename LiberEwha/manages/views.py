@@ -10,7 +10,6 @@ from rest_framework.exceptions import PermissionDenied
 class ManageBoothView(views.APIView):
     permission_classes= [IsAuthenticated]
 
-    
     def post(self, request, pk):
         serializer = ManageBoothSerializer(data=request.data)
         if serializer.is_valid():
