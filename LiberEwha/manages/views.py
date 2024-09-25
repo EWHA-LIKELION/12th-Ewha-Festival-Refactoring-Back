@@ -22,7 +22,14 @@ class ManageBoothView(views.APIView):
                         status=HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
-        booth = get_object_or_404(Booth, pk=pk) 
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+
+        booth = get_object_or_404(Booth, pk=pk)
+
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         serializer = ManageBoothSerializer(booth,
                                            data=request.data,
                                            partial=True) #일부만 수정 가능하게: partial=True
@@ -36,7 +43,14 @@ class ManageBoothView(views.APIView):
                         status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        booth = get_object_or_404(Booth, pk=pk) 
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+
+        booth = get_object_or_404(Booth, pk=pk)
+
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         booth.delete()
         return Response({'message': '부스 삭제 성공'}, 
                         status=HTTP_200_OK )
@@ -45,7 +59,15 @@ class ManageMenuView(views.APIView):
     permission_classes= [IsAuthenticated]
 
     def post(self, request, booth_id):
-        booth = get_object_or_404(Booth, pk=booth_id)  # 부스가 존재하는지 확인
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+
+        booth = get_object_or_404(Booth, pk=booth_id)
+
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
+        #booth = get_object_or_404(Booth, pk=booth_id)  # 부스가 존재하는지 확인
         serializer = ManageMenuSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(booth=booth)  # 부스 정보 저장
@@ -57,6 +79,14 @@ class ManageMenuView(views.APIView):
                         status=HTTP_400_BAD_REQUEST)
 
     def patch(self, request, booth_id, menu_id):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+
+        booth = get_object_or_404(Booth, booth__id=booth_id)
+
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         menu = get_object_or_404(Menu, pk=menu_id, booth__id=booth_id) 
         serializer = ManageMenuSerializer(menu,
                                           data=request.data,
@@ -71,6 +101,14 @@ class ManageMenuView(views.APIView):
                         status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, booth_id, menu_id):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+
+        booth = get_object_or_404(Booth, booth__id=booth_id)
+
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         menu = get_object_or_404(Menu, pk=menu_id, booth__id=booth_id) 
         menu.delete()
         return Response({'message': '메뉴 삭제 성공'}, 
@@ -162,10 +200,7 @@ class ReplyDeleteView(views.APIView):
         reply_entry.delete()
         return Response({"message": "답글 삭제 성공!"}, 
                         status=HTTP_204_NO_CONTENT)
-from .models import *
-from manages.serializers import *
-from booths.serializers import *
-
+    
 class NoticeView(views.APIView):
   def post(self, request, pk):
     # 로그인이 되어있는지
