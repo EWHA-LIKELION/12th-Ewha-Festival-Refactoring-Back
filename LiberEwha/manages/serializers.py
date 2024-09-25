@@ -16,14 +16,13 @@ class ManageBoothSerializer(serializers.ModelSerializer):
     #booth_id = serializers.IntegerField(source='booth.id', read_only=True)
     menus = MenuMainSerializer(many=True, read_only=True)
     booth_place = serializers.SerializerMethodField()
-    booth_hours = serializers.SerializerMethodField()
     days = serializers.SerializerMethodField()
     class Meta:
         model = Booth
         fields = ['id', 'name', 'booth_place', 'category', 
                   'thumbnail', 'admin_contact', 'is_opened', 
-                  'booth_hours', 'description', 
-                  'menus']
+                  'description', 
+                  'menus', 'days']
 
     def get_booth_place(self, obj):
         return obj.booth_place() 

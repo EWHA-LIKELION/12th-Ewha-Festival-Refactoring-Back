@@ -6,15 +6,21 @@ from .models import *
 
 class BoothsMainSerializer(serializers.ModelSerializer):
     booth_place = serializers.SerializerMethodField()
+    dayofweek = serializers.SerializerMethodField()
 
     class Meta:
         model = Booth
         fields = ['id', 'name', 'category', 
                   'thumbnail', 'is_opened', 
-                  'booth_place'] 
+                  'booth_place'
+                  ,'dayofweek']
         
     def get_booth_place(self, obj):
         return obj.booth_place() 
+    
+    def get_dayofweek(self, obj):
+        days = obj.days.all()
+        return [day.dayofweek for day in days]
 
 class MenuMainSerializer(serializers.ModelSerializer):
     booth_id = serializers.IntegerField(source='booth.id', read_only=True)  # booth_id 추가
@@ -28,7 +34,6 @@ class MenuMainSerializer(serializers.ModelSerializer):
         
     def get_menu_price(self, obj):
         return obj.menu_price() 
-
 
 class BoothsDetailSerializer(serializers.ModelSerializer):
     #booth_id = serializers.IntegerField(source='booth.id', read_only=True)

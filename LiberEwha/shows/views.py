@@ -41,7 +41,7 @@ class ShowsMainView(views.APIView): #부스 목록 페이지
                 shows = shows.filter(category=category)
 
         if dayofweek:  # dayofweek가 요청되면
-            shows = shows.filter(dayofweek=dayofweek)
+            shows = shows.filter(days__dayofweek=dayofweek)
 
         shows = shows.order_by("id") #오름차순 정렬
         serializer = ShowsMainSerializer(shows, many=True)

@@ -40,7 +40,7 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
                 booths = booths.filter(category=category)
 
         if dayofweek:  # dayofweek가 요청되면
-            booths = booths.filter(dayofweek=dayofweek)
+            booths = booths.filter(days__dayofweek=dayofweek)
 
         booths = booths.order_by("id") #오름차순 정렬
         serializer = BoothsMainSerializer(booths, many=True)
