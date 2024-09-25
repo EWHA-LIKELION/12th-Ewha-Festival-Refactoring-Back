@@ -47,17 +47,29 @@ class Booth(models.Model):
     description = models.TextField(null=True) #소개글 
     is_show = models.BooleanField(default=False) #default: 부스
     scrap_count = models.IntegerField(default=0) #스크랩 수
-
+    notice_count = models.IntegerField(default=0)
+    
     def booth_place(self):
         return f"{self.place} {self.id}"
-    '''
-    def booth_hours(self):
-        day_list =[day.day for day in self.days.all()]
-        dayofweek_list =[dayofweek.day for dayofweek in self.dayofweeks.all()]
-        day= ', '.join(day_list)
-        dayofweek= ', '.join(dayofweek_list)
-        return f"{day}일 {dayofweek}요일 - {self.opening_time} ~ {self.closing_time}"
-    '''
+    
+    def increaseScrapCount(self):
+        self.scrap_count += 1
+        self.save()
+
+    def decreaseScrapCount(self):
+        if self.scrap_count > 0:
+            self.scrap_count -= 1
+            self.save()
+
+    def increaseNoticeCount(self):
+        self.notice_count += 1
+        self.save()
+
+    def decreaseNoticeCount(self):
+        if self.scrap_count > 0:
+            self.notice_count -= 1
+            self.save()
+
     def __str__(self):
         return self.name
 
@@ -73,12 +85,23 @@ class Menu(models.Model):
     price = models.IntegerField(blank=False,null= False, unique=False)
     img = models.ImageField(upload_to='menu_img', null=False)
     is_vegan = models.CharField(max_length=10, choices=VEGAN_CHOICES, default='None', null=False)
-    scrap_count = models.IntegerField(default=0) #메뉴 스크랩 수
     is_soldout = models.BooleanField(default=False)
+    scrap_count = models.IntegerField(default=0) #메뉴 스크랩 수
+    
     def menu_price(self):
         return f"{self.price}원"
+    
     def __str__(self):
         return self.menu
+    
+    def increaseScrapCount(self):
+        self.scrap_count += 1
+        self.save()
+
+    def decreaseScrapCount(self):
+        if self.scrap_count > 0:
+            self.scrap_count -= 1
+            self.save()
     #여기서 related_name은 Booth 모델에서 해당 부스에 연결된 모든 메뉴를 참조할 때 사용할 수 있는 이름을 지정한 것
 
 # 부스 공지 모델

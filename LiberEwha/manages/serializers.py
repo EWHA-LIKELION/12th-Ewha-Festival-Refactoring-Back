@@ -45,3 +45,9 @@ class ManageSerializer(serializers.ModelSerializer):
         days = [f"{day.opening_time} ~ {day.closing_time}"
                  for day in obj.days.all()]
         return days
+    
+class BoothNoticeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Booth_notice
+        fields = ['notice_type', 'content', 'booth']
