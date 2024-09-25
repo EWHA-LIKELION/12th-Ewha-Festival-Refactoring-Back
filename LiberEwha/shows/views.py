@@ -33,8 +33,7 @@ class ShowsMainView(views.APIView): #부스 목록 페이지
         # 부스 정렬 기준
         shows = Booth.objects.all()
 
-        if is_show:
-            shows = shows.filter(is_show = True)
+        shows = shows.filter(is_show = True)
 
         if category :
             if category is not None:
