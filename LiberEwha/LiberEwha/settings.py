@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'booths',
     'shows',
     'manages',
+    'notice',
 ]
 
 MIDDLEWARE = [
