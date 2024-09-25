@@ -27,29 +27,34 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
     serializer_class = BoothsMainSerializer
 
     def get(self, request):
-        category = request.data.get('category')
-        place = request.data.get('place')
-        date = request.data.get('date')
-        is_show= request.data.get('is_show')
+        category = request.GET.get('category')
+        place = request.GET.get('place')
+        dayofweek = request.GET.get('dayofweek')
+        is_show= request.GET.get('is_show')
 
-        # 부스 정렬 기준 추가
+        # 부스 정렬 기준
         booths = Booth.objects.all()
-        if is_show and is_show != True:
-            booths = booths.filter(is_show = True)
 
-        if place and place != "null":
-                booths = booths.filter(place=place)
+        if is_show:
+                booths = booths.filter(is_show = False)
+
+        if category:
+                booths = booths.filter(category=category)
+
+        if dayofweek:  # dayofweek가 요청되면
+            booths = booths.filter(days__dayofweek=dayofweek)
 
         booths = booths.order_by("id") #오름차순 정렬
         serializer = BoothsMainSerializer(booths, many=True)
         return Response({'message': "부스 목록 불러오기 성공!",
                          'data': serializer.data},
                         status=HTTP_200_OK)
+    
 
 # 일반 사용자 방명록 작성 뷰
 class GuestBookUserView(views.APIView):
     permission_classes = [IsAuthenticated]
-    # 로그인하지 않으면 401 Unauthorized 뜸
+    # 로그인하지 않으면 401 Unauthorized 뜨도록
 
     def get_object(self, pk):
         return get_object_or_404(Booth, pk=pk)
@@ -57,7 +62,7 @@ class GuestBookUserView(views.APIView):
     def post(self, request, pk, format=None):
         if request.user.is_anonymous:
             return Response({"error": "로그인 후 방명록을 작성할 수 있습니다."}, 
-                            status=status.HTTP_401_UNAUTHORIZED)
+                            status=HTTP_401_UNAUTHORIZED)
         user = request.user
         booth = self.get_object(pk)
         serializer = GuestBookSerializer(data=request.data, context={'request': request, 'booth_id': booth.id})
@@ -67,9 +72,9 @@ class GuestBookUserView(views.APIView):
             response_serializer = GuestBookSerializer(guestbook_instance)
             return Response({"message": "방명록 작성 성공!", 
                              "data": response_serializer.data}, 
-                            status=status.HTTP_201_CREATED)
+                            status=HTTP_201_CREATED)
         return Response({"error": "방명록 작성 실패"},
-                         status=status.HTTP_400_BAD_REQUEST)
+                         status=HTTP_400_BAD_REQUEST)
         
     def get(self, request, pk):
         booth = self.get_object(pk)
@@ -92,11 +97,11 @@ class GuestBookDeleteView(views.APIView):
 
         if guestbook_entry.user != request.user:
             return Response({"error": "자신이 작성한 방명록만 삭제할 수 있습니다."}, 
-                            status=status.HTTP_403_FORBIDDEN)
+                            status=HTTP_403_FORBIDDEN)
 
         guestbook_entry.delete()
         return Response({"message": "방명록 삭제 성공!"}, 
-                        status=status.HTTP_204_NO_CONTENT)
+                        status=HTTP_204_NO_CONTENT)
 
 
 class BoothScrapView(views.APIView):
@@ -178,5 +183,3 @@ class MenuScrapView(views.APIView):
         menu.decreaseScrapCount()
         menuScrap.delete()
         return Response({"message": "스크랩 삭제"}, status=HTTP_200_OK)
-        
-
