@@ -9,5 +9,7 @@ urlpatterns=[
     path('<int:pk>/', BoothsDetailView.as_view()),
     path('<int:pk>/guestbook/', GuestBookUserView.as_view()),
     path('<int:pk>/guestbook/<int:guestbook_id>/', GuestBookDeleteView.as_view())
+    #path('<int:pk>/scrap/', BoothScrapView.as_view()),
+    #path('<int:pk>/menus/<int:menu_id>/scrap/', MenuScrapView.as_view())
 
 ]

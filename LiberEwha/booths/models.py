@@ -38,8 +38,28 @@ class Booth(models.Model):
     #스크랩 수
     scrap_count = models.IntegerField(default=0)
 
+    notice_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
+    
+    def increaseScrapCount(self):
+        self.scrap_count += 1
+        self.save()
+
+    def decreaseScrapCount(self):
+        if self.scrap_count > 0:
+            self.scrap_count -= 1
+            self.save()
+
+    def increaseNoticeCount(self):
+        self.notice_count += 1
+        self.save()
+
+    def decreaseNoticeCount(self):
+        if self.scrap_count > 0:
+            self.notice_count -= 1
+            self.save()
 
 #운영시간 : 10일 수요일 10시~15시/ 11일 목요일 10시~15시
 
@@ -61,6 +81,15 @@ class Menu(models.Model):
     def __str__(self):
         return self.menu
     #여기서 related_name은 Booth 모델에서 해당 부스에 연결된 모든 메뉴를 참조할 때 사용할 수 있는 이름을 지정한 것
+
+    def increaseScrapCount(self):
+        self.scrap_count += 1
+        self.save()
+
+    def decreaseScrapCount(self):
+        if self.scrap_count > 0:
+            self.scrap_count -= 1
+            self.save()
 
 # 부스 공지 모델
 class Booth_notice(models.Model):
@@ -118,6 +147,8 @@ class Booth_scrap(models.Model):
 
     # 유저 (외래키)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="booth_scrap")
+
+    
 
 # 메뉴 스크랩 모델
 class Menu_scrap(models.Model):

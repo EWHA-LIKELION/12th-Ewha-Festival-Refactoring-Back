@@ -99,3 +99,84 @@ class GuestBookDeleteView(views.APIView):
                         status=status.HTTP_204_NO_CONTENT)
 
 
+class BoothScrapView(views.APIView):
+    def post(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+        
+        booth = get_object_or_404(Booth, pk=pk)
+
+        data = {
+            "booth": booth.id,
+            "user": request.user.id
+        }
+        if Booth_scrap.objects.filter(booth=booth, user=request.user).exists():
+            return Response({"message":"이미 스크랩 하셨습니다."}, status=HTTP_400_BAD_REQUEST)
+
+        scrapSerializer = BoothScrapSerializer(data = data)
+        if scrapSerializer.is_valid():
+            booth.increaseScrapCount()
+            scrapSerializer.save()
+            return Response({'message': '스크랩 성공'}, status=HTTP_200_OK)
+            
+        else:
+            return Response(scrapSerializer.errors, status=HTTP_400_BAD_REQUEST)
+            
+    def delete(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+        
+        
+        boothScrap = get_object_or_404(Booth_scrap, user=request.user.id, booth=pk)
+        booth = get_object_or_404(Booth, pk=pk)
+
+        if not Booth_scrap.objects.filter(booth=booth, user=request.user).exists():
+            return Response({"message": "취소할 스크랩이 없습니다."}, status=HTTP_400_BAD_REQUEST)
+
+
+        booth.decreaseScrapCount()
+        boothScrap.delete()
+        return Response({"message": "스크랩 삭제"}, status=HTTP_200_OK)
+        
+
+
+class MenuScrapView(views.APIView):
+    def post(self, request, pk, menu_id):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+        
+        menu = get_object_or_404(Menu, pk=menu_id)
+
+        data = {
+            "menu": menu.id,
+            "user": request.user.id
+        }
+
+        if Menu_scrap.objects.filter(menu=menu, user=request.user).exists():
+            return Response({"이미 스크랩 하셨습니다."}, status=HTTP_400_BAD_REQUEST)
+
+        scrapSerializer = MenuScrapSerializer(data = data)
+        if scrapSerializer.is_valid():
+            menu.increaseScrapCount()
+            scrapSerializer.save()
+            return Response({'message': '스크랩 성공'}, status=HTTP_200_OK)
+            
+        else:
+            return Response(scrapSerializer.errors, status=HTTP_400_BAD_REQUEST)
+            
+    def delete(self, request, pk, menu_id):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+        
+        menuScrap = get_object_or_404(Menu_scrap, user=request.user.id, menu=menu_id)
+        menu = get_object_or_404(Menu, pk=menu_id)
+
+        if not menuScrap.objects.filter(menu=menu, user=request.user).exists():
+            return Response({"message": "취소할 스크랩이 없습니다."}, status=HTTP_400_BAD_REQUEST)
+
+
+        menu.decreaseScrapCount()
+        menuScrap.delete()
+        return Response({"message": "스크랩 삭제"}, status=HTTP_200_OK)
+        
+
