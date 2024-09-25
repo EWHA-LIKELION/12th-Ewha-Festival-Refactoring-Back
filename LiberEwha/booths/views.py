@@ -49,7 +49,7 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
 # 일반 사용자 방명록 작성 뷰
 class GuestBookUserView(views.APIView):
     permission_classes = [IsAuthenticated]
-    # 로그인하지 않으면 401 Unauthorized 뜸
+    # 로그인하지 않으면 401 Unauthorized 뜨도록
 
     def get_object(self, pk):
         return get_object_or_404(Booth, pk=pk)
