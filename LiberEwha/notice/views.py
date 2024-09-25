@@ -2,7 +2,8 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Notice
-from .serializers import NoticeSerializer
+from .serializers import NoticeSerializer, NoticeListSerializer
+from .pagination import NoticePagination
 
 class NoticeCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -17,15 +18,17 @@ class NoticeCreateView(APIView):
         return Response({"detail" : "이 사용자에게는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
 
 
+
+
 class NoticeListView(APIView):
     def get(self, request):
         notices = Notice.objects.all()
-        serializer = NoticeSerializer(notices, many=True)
+        serializer = NoticeListSerializer(notices, many=True)  
         return Response(serializer.data)
     
 
 class NoticeDetailView(APIView):
-    permission_classes = [permissions.AllowAny]  # 모든 사용자에게 GET 요청 허용
+    permission_classes = [permissions.AllowAny]  
 
     def get(self, request, pk):
         try:
