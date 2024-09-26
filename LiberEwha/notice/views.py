@@ -23,10 +23,23 @@ class NoticeListView(APIView):
     pagination_class = NoticePagination
 
     def get(self, request):
+        notice_type = request.query_params.get('type')
         notices = Notice.objects.all()
+
+        # 공지사항 필터링
+        if notice_type in ['operational', 'event']:
+            notices = Notice.objects.filter(notice_type=notice_type)
+        elif notice_type is not None:
+            return Response({"detail":"유효하지 않은 타입입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
         paginator = self.pagination_class()
         paginated_notices = paginator.paginate_queryset(notices, request)
         serializer = NoticeListSerializer(paginated_notices, many=True)  
+
+
         return paginator.get_paginated_response(serializer.data)
     
 
