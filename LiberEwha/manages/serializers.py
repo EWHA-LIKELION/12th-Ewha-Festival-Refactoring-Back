@@ -49,4 +49,9 @@ class BoothNoticeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Booth_notice
-        fields = ['notice_type', 'content', 'booth']
+        fields = ['notice_type', 'content', 'booth', 'created_at']
+
+class BoothNoticeCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booth
+        fields = ['notice_count']
