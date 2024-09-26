@@ -72,7 +72,7 @@ class NoticeDetailView(APIView):
             notice = Notice.objects.get(pk=pk)
             if request.user.is_authenticated and request.user.is_tf:  # 인증된 사용자 및 is_tf 권한 확인
                 notice.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+                return Response({"detail":"삭제 완료"}, status=status.HTTP_204_NO_CONTENT)
             return Response({"detail": "이 사용자에게는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
         except Notice.DoesNotExist:
             return Response({"detail": "공지사항을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)

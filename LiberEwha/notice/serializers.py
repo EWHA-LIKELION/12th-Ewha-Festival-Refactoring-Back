@@ -4,7 +4,7 @@ from .models import Notice
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notice
-        fields = ['id', 'title', 'content', 'notice_type', 'is_important', 'created_at']
+        fields = ['id', 'title', 'content', 'notice_type', 'event_type', 'is_important', 'created_at']
         read_only_fields = ['created_at', 'author']
 
     def create(self, validated_data):
