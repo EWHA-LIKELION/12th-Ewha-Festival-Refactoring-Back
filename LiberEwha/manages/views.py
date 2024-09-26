@@ -15,10 +15,10 @@ class ManageBoothView(views.APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)  # 부스 정보 저장
             return Response({'message': '부스 생성 성공', 
-                             'data': serializer.data}, 
+                            'data': serializer.data}, 
                             status=HTTP_200_OK)
         return Response({'message': '부스 생성 실패', 
-                         'errors': serializer.errors}, 
+                        'errors': serializer.errors}, 
                         status=HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
@@ -31,15 +31,15 @@ class ManageBoothView(views.APIView):
         if request.user != booth.user:
             return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         serializer = ManageBoothSerializer(booth,
-                                           data=request.data,
-                                           partial=True) #일부만 수정 가능하게: partial=True
+                                        data=request.data,
+                                        partial=True) #일부만 수정 가능하게: partial=True
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response({'message': '부스 수정 성공', 
-                             'data': serializer.data}, 
+                            'data': serializer.data}, 
                             status=HTTP_200_OK)
         return Response({'message': '부스 수정 실패', 
-                         'errors': serializer.errors}, 
+                        'errors': serializer.errors}, 
                         status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
@@ -72,10 +72,10 @@ class ManageMenuView(views.APIView):
         if serializer.is_valid():
             serializer.save(booth=booth)  # 부스 정보 저장
             return Response({'message': '메뉴 생성 성공', 
-                             'data': serializer.data}, 
+                            'data': serializer.data}, 
                             status=HTTP_200_OK)
         return Response({'message': '메뉴 생성 실패', 
-                         'errors': serializer.errors}, 
+                        'errors': serializer.errors}, 
                         status=HTTP_400_BAD_REQUEST)
 
     def patch(self, request, booth_id, menu_id):
@@ -89,15 +89,15 @@ class ManageMenuView(views.APIView):
             return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
         menu = get_object_or_404(Menu, pk=menu_id, booth__id=booth_id) 
         serializer = ManageMenuSerializer(menu,
-                                          data=request.data,
-                                          partial=True) #일부만 수정 가능하게: partial=True
+                                        data=request.data,
+                                        partial=True) #일부만 수정 가능하게: partial=True
         if serializer.is_valid():
             updated_menu = serializer.save()
             return Response({'message': '메뉴 수정 성공', 
-                             'data': serializer.data}, 
+                            'data': serializer.data}, 
                             status=HTTP_200_OK)
         return Response({'message': '메뉴 수정 실패', 
-                         'errors': serializer.errors}, 
+                        'errors': serializer.errors}, 
                         status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, booth_id, menu_id):
@@ -134,7 +134,7 @@ class ManageView(views.APIView): #부스 상세 페이지
         booths = booths.order_by("id") #오름차순 정렬
         serializer = ManageSerializer(booths, many=True)
         return Response({'message': "TF - 목록 불러오기 성공",
-                         'data': serializer.data},
+                        'data': serializer.data},
                         status=HTTP_200_OK)
     
 class ReplyManageView(views.APIView):
@@ -161,7 +161,7 @@ class ReplyManageView(views.APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "답글 작성 성공!",
-                             "data": serializer.data}, 
+                            "data": serializer.data}, 
                             status=HTTP_201_CREATED)
         
         return Response({"error": "답글 작성 실패"}, 
@@ -179,8 +179,8 @@ class ReplyManageView(views.APIView):
         serializer = ReplySerializer(replies, many=True)
 
         return Response({"message": "방명록 답글 가져오기 성공!", 
-                         "data": serializer.data}, 
-                         status=HTTP_200_OK)
+                        "data": serializer.data}, 
+                        status=HTTP_200_OK)
     
 class ReplyDeleteView(views.APIView):
     permission_classes = [IsAuthenticated]
@@ -202,41 +202,68 @@ class ReplyDeleteView(views.APIView):
                         status=HTTP_204_NO_CONTENT)
     
 class NoticeView(views.APIView):
-  def post(self, request, pk):
-    # 로그인이 되어있는지
-    if not request.user.is_authenticated:
-      return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+    def post(self, request, pk):
+        # 로그인이 되어있는지
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
 
-    booth = get_object_or_404(Booth, pk=pk)
+        booth = get_object_or_404(Booth, pk=pk)
 
-    # 부스의 user가 내가 맞는지
-    if request.user != booth.user:
-      return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
     
-    data = request.data
-    data['booth'] = booth.id
+        data = request.data
+        data['booth'] = booth.id
     
-    serializer = BoothNoticeSerializer(data = data)
-    if serializer.is_valid():
-      booth.increaseNoticeCount()
-      serializer.save()
-      return Response({'message': '공지를 등록했습니다.'}, status=HTTP_200_OK)
+        serializer = BoothNoticeSerializer(data = data)
+        if serializer.is_valid():
+            booth.increaseNoticeCount()
+            serializer.save()
+            return Response({'message': '공지를 등록했습니다.'}, status=HTTP_200_OK)
     
-    else:
-      return Response({'error': serializer.errors}, status=HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': serializer.errors}, status=HTTP_400_BAD_REQUEST)
+        
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+        
+        booth = get_object_or_404(Booth, pk = pk)
+        boothSerializer = BoothNoticeCountSerializer(booth)
+
+        notice_list = {}
+        
+        notices = Booth_notice.objects.filter(booth = pk)
+        i=0
+        for notice in notices:
+            i += 1
+            noticeSerializer = BoothNoticeSerializer(notice)
+            notice_list[i] = noticeSerializer.data
+            
+
+
+
+        return Response({
+            "count": boothSerializer.data,
+            "notice": notice_list
+        }, status=HTTP_200_OK)
 
 class NoticeDeleteView(views.APIView):
-  def delete(self, request, pk, info_id):
-    if not request.user.is_authenticated:
-      return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk, info_id):
+        if not request.user.is_authenticated:
+            return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
 
-    boothNotice = get_object_or_404(Booth_notice, pk=info_id)
-    booth = get_object_or_404(Booth, pk=pk)
+        boothNotice = get_object_or_404(Booth_notice, pk=info_id)
+        booth = get_object_or_404(Booth, pk=pk)
 
-    # 부스의 user가 내가 맞는지
-    if request.user != booth.user:
-      return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
+        # 부스의 user가 내가 맞는지
+        if request.user != booth.user:
+            return Response({"message": "권한이 없습니다."}, status=HTTP_400_BAD_REQUEST)
     
-    booth.decreaseNoticeCount()
-    boothNotice.delete()
-    return Response({"message": "공지 삭제"}, status=HTTP_200_OK)
+        booth.decreaseNoticeCount()
+        boothNotice.delete()
+        return Response({"message": "공지 삭제"}, status=HTTP_200_OK)
+    
+    
+        
