@@ -31,7 +31,7 @@ class ShowsDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'booth_place', 'category', 
                   'thumbnail', 'admin_contact', 'is_opened', 
                   'description',
-                  'days']
+                  'days','scrap_count','notice_count']
     
     def get_booth_place(self, obj):
         return obj.booth_place() 

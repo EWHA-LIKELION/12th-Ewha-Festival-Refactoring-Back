@@ -70,8 +70,6 @@ class Booth(models.Model):
             self.notice_count -= 1
             self.save()
 
-    notice_count = models.IntegerField(default=0)
-
     def __str__(self):
         return self.name
     
