@@ -10,5 +10,6 @@ urlpatterns = [
     path('booths/', include('booths.urls')),
     path('shows/', include('shows.urls')),
     path('manages/', include('manages.urls')),
+    path('notice/', include('notice.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
