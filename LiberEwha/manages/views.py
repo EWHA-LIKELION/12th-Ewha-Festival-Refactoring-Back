@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from booths.models import *
 from .serializers import *
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import NotFound
+
 
 class ManageBoothView(views.APIView):
     permission_classes= [IsAuthenticated]
@@ -138,19 +140,26 @@ class ManageView(views.APIView): #부스 상세 페이지
                         status=HTTP_200_OK)
     
 class ReplyManageView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    # 로그인하지 않으면 401 Unauthorized 뜸
-
+    
     def get_object(self, pk):
-        return get_object_or_404(Booth, pk=pk)
+        try:
+            return Booth.objects.get(pk=pk)
+        except Booth.DoesNotExist:
+            raise NotFound("부스를 찾을 수 없습니다.")
 
     def post(self, request, pk, guestbook_id, format=None):
+        if request.user.is_anonymous:
+            return Response({"error": "로그인 후 답글을 작성할 수 있습니다."}, 
+                            status=HTTP_401_UNAUTHORIZED)
         # 해당 부스의 관리자인지 확인
-        booth = self.get_object(pk)
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
         if booth.user != request.user:
             return Response({"error": "해당 부스 관리자만 답글을 달 수 있습니다."}, 
                             status=HTTP_403_FORBIDDEN)
-        
         try:
             guestbook_entry = Guestbook.objects.get(id=guestbook_id, booth=booth)
         except Guestbook.DoesNotExist:
@@ -168,7 +177,14 @@ class ReplyManageView(views.APIView):
                             status=HTTP_400_BAD_REQUEST)
     
     def get(self, request, pk, guestbook_id, format=None):
-        booth = self.get_object(pk)
+        if request.user.is_anonymous:
+            return Response({"error": "로그인 후 답글을 조회할 수 있습니다."}, 
+                            status=HTTP_401_UNAUTHORIZED)
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
         try:
             guestbook_entry = Guestbook.objects.get(id=guestbook_id, booth=booth)
         except Guestbook.DoesNotExist:
@@ -183,18 +199,47 @@ class ReplyManageView(views.APIView):
                         status=HTTP_200_OK)
     
 class ReplyDeleteView(views.APIView):
-    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
-        return get_object_or_404(Booth, pk=pk)
+        try:
+            return Booth.objects.get(pk=pk)
+        except Booth.DoesNotExist:
+            raise NotFound("부스를 찾을 수 없습니다.")
+        
+    def get_guestbook_entry(self, guestbook_id, booth):
+        try:
+            return Guestbook.objects.get(id=guestbook_id, booth=booth)
+        except Guestbook.DoesNotExist:
+            raise NotFound("해당 방명록 항목을 찾을 수 없습니다.")
+
+    def get_reply_entry(self, reply_id, guestbook_entry):
+        try:
+            return Reply.objects.get(id=reply_id, guestbook=guestbook_entry)
+        except Reply.DoesNotExist:
+            raise NotFound("해당 답변을 찾을 수 없습니다.")
 
     def delete(self, request, pk, guestbook_id, reply_id):
-        booth = self.get_object(pk)
-        guestbook_entry = get_object_or_404(Guestbook, id=guestbook_id, booth=booth)
-        reply_entry = get_object_or_404(Reply, id=reply_id, guestbook=guestbook_entry)
+        if request.user.is_anonymous:
+            return Response({"error": "로그인 후 답글을 삭제할 수 있습니다."}, 
+                            status=HTTP_401_UNAUTHORIZED)
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
+        try:
+            guestbook_entry = self.get_guestbook_entry(guestbook_id, booth)
+        except NotFound as e:
+            return Response({"error": str(e)}, status=HTTP_404_NOT_FOUND)
+
+        try:
+            reply_entry = self.get_reply_entry(reply_id, guestbook_entry)
+        except NotFound as e:
+            return Response({"error": str(e)}, status=HTTP_404_NOT_FOUND)
+
 
         if reply_entry.user != request.user:
-            return Response({"error": "자신이 작성한 댓글만 삭제할 수 있습니다."}, 
+            return Response({"error": "자신이 작성한 답글만 삭제할 수 있습니다."}, 
                             status=HTTP_403_FORBIDDEN)
         
         reply_entry.delete()

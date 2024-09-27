@@ -3,6 +3,7 @@ from rest_framework import views
 from rest_framework.status import *
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import NotFound
 from rest_framework import status
 from .models import *
 from .serializers import *
@@ -51,18 +52,23 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
 
 # 일반 사용자 방명록 작성 뷰
 class GuestBookUserView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    # 로그인하지 않으면 401 Unauthorized 뜨도록
 
     def get_object(self, pk):
-        return get_object_or_404(Booth, pk=pk)
+        try:
+            return Booth.objects.get(pk=pk)
+        except Booth.DoesNotExist:
+            raise NotFound("부스를 찾을 수 없습니다.")
 
     def post(self, request, pk, format=None):
         if request.user.is_anonymous:
             return Response({"error": "로그인 후 방명록을 작성할 수 있습니다."}, 
                             status=HTTP_401_UNAUTHORIZED)
         user = request.user
-        booth = self.get_object(pk)
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
         serializer = GuestBookSerializer(data=request.data, context={'request': request, 'booth_id': booth.id})
 
         if serializer.is_valid():
@@ -75,7 +81,17 @@ class GuestBookUserView(views.APIView):
                          status=HTTP_400_BAD_REQUEST)
         
     def get(self, request, pk):
-        booth = self.get_object(pk)
+
+        if not request.user.is_authenticated:
+            return Response({"error": "로그인 후 방명록을 가져올 수 있습니다."},
+                             status=HTTP_401_UNAUTHORIZED)
+
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
+
         guestbook= Guestbook.objects.filter(booth=booth)
         serializer = GuestBookSerializer(guestbook, many=True)
         return Response({"message": "부스 방명록 가져오기 성공!", 
@@ -83,14 +99,24 @@ class GuestBookUserView(views.APIView):
                          status=HTTP_200_OK)
 
 class GuestBookDeleteView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    # 로그인하지 않으면 401 Unauthorized 뜸
 
-    def get_booth(self, pk):
-        return get_object_or_404(Booth, pk=pk)
+    def get_object(self, pk):
+        try:
+            return Booth.objects.get(pk=pk)
+        except Booth.DoesNotExist:
+            raise NotFound("부스를 찾을 수 없습니다.")
     
     def delete(self, request, pk, guestbook_id):
-        booth = self.get_booth(pk)
+        if not request.user.is_authenticated:
+            return Response({"error": "로그인 후 방명록 기능을 사용할 수 있습니다."},
+                             status=HTTP_401_UNAUTHORIZED)
+
+        try:
+            booth = self.get_object(pk)
+        except NotFound as e:
+            return Response({"error": str(e)}, 
+                            status=HTTP_404_NOT_FOUND)
+        
         guestbook_entry = get_object_or_404(Guestbook, booth=booth, id=guestbook_id)
 
         if guestbook_entry.user != request.user:
