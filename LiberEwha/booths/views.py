@@ -8,6 +8,7 @@ from rest_framework import status
 from .models import *
 from .serializers import *
 from manages.views import *
+from manages.serializers import *
 
 # Create your views here.
 class BoothsDetailView(views.APIView): #부스 상세 페이지
@@ -19,9 +20,25 @@ class BoothsDetailView(views.APIView): #부스 상세 페이지
     def get(self, request, pk):
         booth = get_object_or_404(Booth, pk=pk)
         serializer= BoothsDetailSerializer(booth)
+        data = serializer.data
+
+        booth = get_object_or_404(Booth, pk = pk)
+        boothSerializer = BoothNoticeCountSerializer(booth)
+
+        notice_list = {}
+        
+        notices = Booth_notice.objects.filter(booth = pk)
+        i=0
+        for notice in notices:
+            i += 1
+            noticeSerializer = BoothNoticeSerializer(notice)
+            notice_list[i] = noticeSerializer.data
+            
+
+        data['notice'] = notice_list
         
         return Response({'message': '부스 상세 조회 성공',
-                        'data': serializer.data},
+                        'data': data},
                         status=HTTP_200_OK)
 
 class BoothsMainView(views.APIView): #부스 목록 페이지

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import *
 from .serializers import *
+from manages.serializers import *
 
 # Create your views here.
 class ShowsDetailView(views.APIView): #부스 상세 페이지
@@ -16,9 +17,26 @@ class ShowsDetailView(views.APIView): #부스 상세 페이지
     def get(self, request, pk):
         show = get_object_or_404(Booth, pk=pk)
         serializer= ShowsDetailSerializer(show)
+
+        data = serializer.data
+
+        booth = get_object_or_404(Booth, pk = pk)
+        boothSerializer = BoothNoticeCountSerializer(booth)
+
+        notice_list = {}
+        
+        notices = Booth_notice.objects.filter(booth = pk)
+        i=0
+        for notice in notices:
+            i += 1
+            noticeSerializer = BoothNoticeSerializer(notice)
+            notice_list[i] = noticeSerializer.data
+            
+
+        data['notice'] = notice_list
         
         return Response({'message': '공연 상세 조회 성공',
-                        'data': serializer.data},
+                        'data': data},
                         status=HTTP_200_OK)
 
 class ShowsMainView(views.APIView): #부스 목록 페이지

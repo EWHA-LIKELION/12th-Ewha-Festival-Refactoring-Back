@@ -28,7 +28,7 @@ class MenuMainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = ['id','booth_id','menu', 
+        fields = ['id','booth_id', 'menu', 
                 'img', 'menu_price',
                 'is_vegan', 'is_soldout']
         
@@ -43,9 +43,9 @@ class BoothsDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booth
-        fields = ['id', 'name', 'booth_place', 'category', 
+        fields = ['id', 'name', 'booth_place', 'category', 'scrap_count',
                   'thumbnail', 'admin_contact', 'is_opened', 
-                  'description', 'menus','days']
+                  'description', 'menus','days' , 'notice_count']
     
     def get_booth_place(self, obj):
         return obj.booth_place() 
