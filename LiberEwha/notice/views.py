@@ -13,9 +13,13 @@ class NoticeCreateView(APIView):
             serializer = NoticeSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 serializer.save(author=request.user)
-                return Response(serializer.data, status = status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"detail" : "이 사용자에게는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"detail": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+        
 
 
 class NoticeListView(APIView):
@@ -31,9 +35,6 @@ class NoticeListView(APIView):
             notices = Notice.objects.filter(notice_type=notice_type)
         elif notice_type is not None:
             return Response({"detail":"유효하지 않은 타입입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
         paginator = self.pagination_class()
         paginated_notices = paginator.paginate_queryset(notices, request)

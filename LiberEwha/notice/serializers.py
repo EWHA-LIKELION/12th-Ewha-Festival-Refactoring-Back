@@ -12,6 +12,8 @@ class NoticeSerializer(serializers.ModelSerializer):
         validated_data['author'] = request.user
         return super().create(validated_data)
     
+    
+    
 
 class NoticeListSerializer(serializers.ModelSerializer):
     class Meta:

@@ -19,7 +19,7 @@ class Notice(models.Model):
 
 
     title = models.CharField(max_length=40)
-    content = models.TextField()
+    content = models.TextField(max_length=800)
     notice_type = models.CharField(max_length=20, choices=NOTICE_TYPE_CHOICES)
     event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
     is_important = models.BooleanField(default=False)
