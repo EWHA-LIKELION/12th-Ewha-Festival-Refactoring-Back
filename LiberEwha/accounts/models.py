@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
-
 class User(AbstractUser):
     nickname = models.CharField(max_length=10, unique=True)
     is_tf = models.BooleanField(default=False)
