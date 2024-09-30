@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import MainPageView, SearchView, ScrapListView
+from .views import MainPageView, SearchView
+
+app_name = 'main'
 
 urlpatterns = [
-    path('main/', MainPageView.as_view(), name='main_page'),
-    path('scraps/', ScrapListView.as_view(), name='scrap_list'),
+    path('', MainPageView.as_view(), name='main_page'),
     path('search/', SearchView.as_view(), name='search'),
 ]
