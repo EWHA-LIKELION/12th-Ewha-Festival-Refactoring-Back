@@ -1,6 +1,9 @@
 from django.urls import path
 from .views import NoticeCreateView, NoticeListView, NoticeDetailView
 
+app_name = 'notice'
+
+
 urlpatterns = [
     path('create/', NoticeCreateView.as_view(), name='notice-create'),
     path('list/', NoticeListView.as_view(), name='notice-list'),
