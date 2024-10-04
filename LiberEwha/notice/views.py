@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from .models import Notice
 from .serializers import NoticeSerializer, NoticeListSerializer
 from .pagination import NoticePagination
+from django.db import models
+from django.db.models import Q
 
 
 class NoticeCreateView(APIView):
