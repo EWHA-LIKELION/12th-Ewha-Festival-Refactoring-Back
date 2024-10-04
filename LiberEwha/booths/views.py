@@ -232,7 +232,7 @@ class MenuScrapView(views.APIView):
 
 class BoothsTFView(views.APIView): #축제일정페이지 - TF 
     def get(self, request):
-        category = request.GET.get('category')
+        booth_category = request.GET.get('booth_category')
         dayofweek = request.GET.get('dayofweek')
 
         boothshow = Booth.objects.all()
@@ -242,8 +242,8 @@ class BoothsTFView(views.APIView): #축제일정페이지 - TF
         if dayofweek:  # dayofweek가 요청되면
             shows = shows.filter(days__dayofweek=dayofweek)
 
-        if category:
-            booths = booths.filter(category=category)
+        if booth_category:
+            booths = booths.filter(booth_category=booth_category)
 
         shows = shows.order_by('id')
         booths = booths.order_by('id')

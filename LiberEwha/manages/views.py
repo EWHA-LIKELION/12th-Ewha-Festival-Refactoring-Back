@@ -118,20 +118,21 @@ class ManageMenuView(views.APIView):
     
 class ManageView(views.APIView): #부스 상세 페이지
     permission_classes= [IsAuthenticated]
-
     serializer_class = ManageSerializer
 
     def get(self, request):
-        
         is_show= request.GET.get('is_show')
+        booth_category = request.GET.get('booth_category')
 
         # 부스 정렬 기준
         booths = Booth.objects.all()
-
-        if is_show == 'False':
-                booths = booths.filter(is_show = False)
-        else:
+        if is_show =='True':
                 booths = booths.filter(is_show=True)
+        else:
+                booths = booths.filter(is_show=False)
+
+        if booth_category:
+                booths = booths.filter(booth_category=booth_category)
 
         booths = booths.order_by("id") #오름차순 정렬
         serializer = ManageSerializer(booths, many=True)

@@ -27,10 +27,10 @@ class Booth(models.Model):
         ('밴드', '밴드'),
         ('댄스', '댄스'),
         #TF부스
-        ('메인행사', '메인행사'),
-        ('기획부스', '기획부스'),
-        ('권리팀부스', '권리팀부스'),
-        ('대외협력팀부스', '대외협력팀부스')
+        #('메인행사', '메인행사'),
+        #('기획부스', '기획부스'),
+        #('권리팀부스', '권리팀부스'),
+        #('대외협력팀부스', '대외협력팀부스')
         ]
 
     DAYOFWEEK_CHOICES =[
@@ -44,6 +44,13 @@ class Booth(models.Model):
         ('11','11'),
         ('12','12')
     ]
+    BOOTH_CATEGORY_CHOICES = [
+        #축운위 부스 종류 관리
+        ('메인행사', '메인행사'),
+        ('기획부스', '기획부스'),
+        ('권리팀부스', '권리팀부스'),
+        ('대외협력팀부스', '대외협력팀부스')
+        ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE, related_name='booths')
     name = models.CharField(max_length=20, unique=True)
     thumbnail = models.ImageField(upload_to='thumbnail', null=False) #upload_to: 업로드된 이미지 모아둘 경로
@@ -55,7 +62,9 @@ class Booth(models.Model):
     is_show = models.BooleanField(default=False) #default: 부스
     scrap_count = models.IntegerField(default=0) #스크랩 수
     notice_count = models.IntegerField(default=0)
-    
+    #새로 추가 -> 부스 종류
+    booth_category = models.CharField(max_length=10, choices=BOOTH_CATEGORY_CHOICES,blank=True, null=True)
+
     def booth_place(self):
         return f"{self.place} {self.id}"
     
