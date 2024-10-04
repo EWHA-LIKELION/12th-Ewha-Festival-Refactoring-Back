@@ -107,7 +107,7 @@ class BoothsTFSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booth
-        fields = ['id', 'name', 'category', 'thumbnail', 'is_opened', 
+        fields = ['id', 'name', 'booth_category', 'thumbnail', 'is_opened', 
                   'is_show', 'booth_place', 'dayofweek', 'days']
         
     def get_booth_place(self, obj):
