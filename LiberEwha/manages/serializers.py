@@ -37,9 +37,11 @@ class ManageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booth
-        fields = ['id', 'name', 'category', 
+        fields = ['id', 'name', 'category',
+                  'booth_category', 
                   'thumbnail', 'is_opened', 
                   'place', 'days']
+        
     def get_days(self, obj):
         days = [f"{day.opening_time} ~ {day.closing_time}"
                  for day in obj.days.all()]
