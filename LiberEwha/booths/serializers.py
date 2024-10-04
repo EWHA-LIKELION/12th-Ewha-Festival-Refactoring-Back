@@ -98,4 +98,42 @@ class MenuScrapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu_scrap
         fields = '__all__'
+
+
+class BoothsTFSerializer(serializers.ModelSerializer):
+    booth_place = serializers.SerializerMethodField()
+    dayofweek = serializers.SerializerMethodField()
+    days = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Booth
+        fields = ['id', 'name', 'category', 'thumbnail', 'is_opened', 
+                  'is_show', 'booth_place', 'dayofweek', 'days']
+        
+    def get_booth_place(self, obj):
+        return obj.booth_place() 
     
+    def get_dayofweek(self, obj):
+        days = obj.days.all()
+        return [day.dayofweek for day in days]
+
+    def get_days(self, obj):
+        days = [f"{day.opening_time} ~ {day.closing_time}" for day in obj.days.all()]
+        return days
+    
+class BoothsTFDetailSerializer(serializers.ModelSerializer):
+    booth_place = serializers.SerializerMethodField()
+    days = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Booth
+        fields = ['id', 'name', 'booth_place', 'category',
+                  'thumbnail', 'admin_contact', 'is_opened', 
+                  'description', 'days']
+    
+    def get_booth_place(self, obj):
+        return obj.booth_place() 
+
+    def get_days(self, obj):
+        days = [f"{day.opening_time} ~ {day.closing_time}" for day in obj.days.all()]
+        return days

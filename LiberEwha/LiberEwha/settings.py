@@ -33,6 +33,16 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
+    'rest_auth',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'rest_auth.registration',
+
+    'allauth.socialaccount.providers.kakao',
 
     'accounts',
     'main',
@@ -42,6 +52,17 @@ INSTALLED_APPS = [
     'notice',
 ]
 
+SITE_ID = 1
+SOCIALACCOUNT_PROVIDERS = {
+    'kakao': {
+        'APP': {
+            'client_id': '41c26ffbb480fe0fe222568af308ede8',
+            'secret': '1139200',
+            'key': ''
+        }
+    }
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -50,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'LiberEwha.urls'

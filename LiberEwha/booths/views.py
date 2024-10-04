@@ -6,6 +6,10 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.exceptions import NotFound
 from rest_framework import status
 from .models import *
+
+from notice.models import *
+from notice.serializers import *
+
 from .serializers import *
 from manages.views import *
 from manages.serializers import *
@@ -224,3 +228,45 @@ class MenuScrapView(views.APIView):
         menu.decreaseScrapCount()
         menuScrap.delete()
         return Response({"message": "스크랩 삭제"}, status=HTTP_200_OK)
+
+
+class BoothsTFView(views.APIView): #축제일정페이지 - TF 
+    def get(self, request):
+        category = request.GET.get('category')
+        dayofweek = request.GET.get('dayofweek')
+
+        boothshow = Booth.objects.all()
+        shows = boothshow.filter(is_show=True)
+        booths = boothshow.filter(is_show=False)
+
+        if dayofweek:  # dayofweek가 요청되면
+            shows = shows.filter(days__dayofweek=dayofweek)
+
+        if category:
+            booths = booths.filter(category=category)
+
+        shows = shows.order_by('id')
+        booths = booths.order_by('id')
+
+        showserializer = BoothsTFSerializer(shows, many=True)
+        boothserializer = BoothsTFSerializer(booths, many=True)
+        return Response({'message': "TF 축제 일정 불러오기 성공!",
+                         'show': showserializer.data,
+                         'booth': boothserializer.data},
+                        status=HTTP_200_OK)
+
+class BoothsTFDetailView(views.APIView): #축제일정상세페이지 - TF
+    def get_object(self, pk):
+        return get_object_or_404(Booth, pk=pk)
+    
+    def get(self, request, pk):
+        booth = get_object_or_404(Booth, pk=pk)
+        boothSerializer= BoothsTFDetailSerializer(booth)   
+
+        notices = Notice.objects.all()
+        noticeSerializer = NoticeListSerializer(notices, many=True)
+
+        return Response({'message': '부스 상세 조회 성공',
+                        'data': boothSerializer.data,
+                        'notice': noticeSerializer.data},
+                        status=HTTP_200_OK)
