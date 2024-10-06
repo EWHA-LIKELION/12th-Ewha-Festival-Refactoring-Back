@@ -28,6 +28,7 @@ class MainPageSerializer(serializers.ModelSerializer):
 class SearchResultSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.SerializerMethodField()
+    place = serializers.SerializerMethodField()
     menu = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
@@ -40,6 +41,11 @@ class SearchResultSerializer(serializers.Serializer):
             return obj.booth.name  # 메뉴의 부스 이름을 표시
         elif isinstance(obj, Notice):
             return obj.title
+        return None
+
+    def get_place(self, obj):
+        if isinstance(obj, Booth):
+            return obj.place
         return None
 
     def get_menu(self, obj):

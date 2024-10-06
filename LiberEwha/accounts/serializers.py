@@ -6,9 +6,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password',
-                  'nickname', 'is_tf', 'is_admin']
-        extra_kwargs = {'password': {'write_only': True}}  # 비밀번호는 출력되지 않도록 설정
+        fields = ['id', 'username', 'password', 'nickname',
+                  'is_tf', 'is_admin', 'is_show']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         user = User(
@@ -16,8 +16,9 @@ class SignUpSerializer(serializers.ModelSerializer):
             nickname=validated_data['nickname'],
             is_tf=validated_data.get('is_tf', False),
             is_admin=validated_data.get('is_admin', False),
+            is_show=validated_data.get('is_show', False),
         )
-        user.set_password(validated_data['password'])  # 비밀번호 설정
+        user.set_password(validated_data['password'])
         user.save()
 
         return user
@@ -44,17 +45,20 @@ class LoginSerializer(serializers.Serializer):
         refresh = str(token)
         access = str(token.access_token)
 
+        # 역할 필드들 추가
         data = {
             'id': user.id,
             'username': user.username,
             'nickname': user.nickname,
-            'access_token': access,
-            'refresh_token': refresh,
             'is_tf': user.is_tf,
             'is_admin': user.is_admin,
+            'is_show': user.is_show,
+            'access_token': access,
+            'refresh_token': refresh,
         }
 
         return data
+
 
 class NicknameCheckSerializer(serializers.Serializer):
     nickname = serializers.CharField()
