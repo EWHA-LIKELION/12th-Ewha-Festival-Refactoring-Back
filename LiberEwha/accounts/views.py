@@ -30,3 +30,11 @@ class LoginView(views.APIView):
         if serializer.is_valid():
             return Response({'message': '로그인 성공', 'data': serializer.validated_data})
         return Response({'message': '로그인 실패', 'error': serializer.errors})
+
+
+class NicknameCheckView(views.APIView):
+    def post(self, request):
+        serializer = NicknameCheckSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response({'message': '사용 가능한 닉네임입니다.'}, status=status.HTTP_200_OK)
+        return Response({'message': '닉네임 중복', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
