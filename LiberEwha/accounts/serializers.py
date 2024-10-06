@@ -2,11 +2,12 @@ from rest_framework import serializers
 from .models import *
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'password',
-                'nickname', 'is_tf', 'is_admin']
+                  'nickname', 'is_tf', 'is_admin']
         extra_kwargs = {'password': {'write_only': True}}  # 비밀번호는 출력되지 않도록 설정
 
     def create(self, validated_data):
@@ -49,6 +50,8 @@ class LoginSerializer(serializers.Serializer):
             'nickname': user.nickname,
             'access_token': access,
             'refresh_token': refresh,
+            'is_tf': user.is_tf,
+            'is_admin': user.is_admin,
         }
 
         return data
