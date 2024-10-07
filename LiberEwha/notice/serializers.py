@@ -3,6 +3,7 @@ from .models import Notice
 
 
 class NoticeSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Notice
         fields = ['id', 'title', 'content', 'notice_type',
