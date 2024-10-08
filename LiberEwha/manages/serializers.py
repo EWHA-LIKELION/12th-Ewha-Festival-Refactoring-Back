@@ -43,17 +43,11 @@ class ManageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booth
-<<<<<<< Updated upstream
-        fields = ['id', 'name', 'category', 
-                  'thumbnail', 'is_opened', 
-                  'place', 'days']
-=======
         fields = ['id', 'name', 'category',
                   'booth_category',
                   'thumbnail', 'is_opened',
                   'place', 'days']
 
->>>>>>> Stashed changes
     def get_days(self, obj):
         days = [f"{day.opening_time} ~ {day.closing_time}"
                  for day in obj.days.all()]

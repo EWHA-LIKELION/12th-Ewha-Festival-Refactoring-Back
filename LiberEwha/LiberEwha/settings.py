@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-u+(c3rclyj3r1ml$1_@h3bns@*73gv*ip++f@fj4*aa06-kl#3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['Liberewha.pythonanywhere.com']
+ALLOWED_HOSTS = ['Liberewha.pythonanywhere.com', '127.0.0.1']
 
 AUTH_USER_MODEL = 'accounts.User'
 

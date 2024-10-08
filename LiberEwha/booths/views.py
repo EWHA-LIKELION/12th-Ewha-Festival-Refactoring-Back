@@ -29,23 +29,21 @@ class BoothsDetailView(views.APIView): #부스 상세 페이지
 
         for menu in data['menus']:
             menu_id = menu['id']
-            is_scraped = Menu_scrap.objects.filter(user=request.user, menu_id=menu_id).exists()
-            menu['is_scraped'] = is_scraped
+            if request.user.is_authenticated:
+                is_scraped = Menu_scrap.objects.filter(user=request.user, menu_id=menu_id).exists()
+                menu['is_scraped'] = is_scraped
+            else:
+                menu['is_scraped'] = 'False'
 
         booth = get_object_or_404(Booth, pk = pk)
         boothSerializer = BoothNoticeCountSerializer(booth)
 
-        notice_list = {}
+        notice_list = []
 
-        notices = Booth_notice.objects.filter(booth = pk)
-        i=0
+        notices = Booth_notice.objects.filter(booth=pk)
         for notice in notices:
-            i += 1
             noticeSerializer = BoothNoticeSerializer(notice)
-            notice_list[i] = noticeSerializer.data
-
-
-        data['notice'] = notice_list
+            notice_list.append(noticeSerializer.data) 
 
         return Response({'message': '부스 상세 조회 성공',
                         'data': data},
@@ -77,8 +75,12 @@ class BoothsMainView(views.APIView): #부스 목록 페이지
 
         for booth in data:
             booth_id = booth['id']
-            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
-            booth['is_scraped'] = is_scraped
+            if request.user.is_authenticated:
+                is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+                booth['is_scraped'] = is_scraped
+            else:
+                booth['is_scraped'] = 'False'
+
         return Response({'message': "부스 목록 불러오기 성공!",
                          'data': serializer.data},
                         status=HTTP_200_OK)

@@ -100,8 +100,12 @@ class SearchView(APIView):
 
         for booth in booth_data:
             booth_id = booth['id']
-            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
-            booth['is_scraped'] = is_scraped
+            if request.user.is_authenticated:
+                is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+                booth['is_scraped'] = is_scraped
+            else:
+                booth['is_scraped'] = 'False'
+
 
         return Response({
             'booths': booth_data,
