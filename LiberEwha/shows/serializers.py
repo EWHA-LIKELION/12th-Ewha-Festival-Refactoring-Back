@@ -6,19 +6,24 @@ from booths.models import *
 class ShowsMainSerializer(serializers.ModelSerializer):
     booth_place = serializers.SerializerMethodField()
     dayofweek = serializers.SerializerMethodField()
+    scrap_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Booth
-        fields = ['id', 'name', 'category', 
-                  'thumbnail', 'is_opened', 
-                  'booth_place', 'dayofweek'] 
-        
+        fields = ['id', 'name', 'category',
+                  'thumbnail', 'is_opened',
+                  'booth_place', 'dayofweek', 'scrap_count']
+
     def get_booth_place(self, obj):
         return obj.booth_place()
 
+    def get_scrap_count(self, obj):
+        return obj.scrap_count
+
+
     def get_dayofweek(self, obj):
         days = obj.days.all()
-        return [day.dayofweek for day in days] 
+        return [day.dayofweek for day in days]
 
 
 class ShowsDetailSerializer(serializers.ModelSerializer):
@@ -28,16 +33,15 @@ class ShowsDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booth
-        fields = ['id', 'name', 'booth_place', 'category', 
-                  'thumbnail', 'admin_contact', 'is_opened', 
+        fields = ['id', 'name', 'booth_place', 'category',
+                  'thumbnail', 'admin_contact', 'is_opened',
                   'description',
                   'days','scrap_count','notice_count']
-    
+
     def get_booth_place(self, obj):
-        return obj.booth_place() 
+        return obj.booth_place()
 
     def get_days(self, obj):
         days = [f"{day.day}일 {day.dayofweek}요일 {day.opening_time} ~ {day.closing_time}"
                  for day in obj.days.all()]
         return days
-    

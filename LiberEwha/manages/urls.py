@@ -13,4 +13,5 @@ urlpatterns=[
     path('<int:pk>/guestbook/<int:guestbook_id>/<int:reply_id>/', ReplyDeleteView.as_view()),
     path('<int:pk>/realtime_info/', NoticeView.as_view()),
     path('<int:pk>/realtime_info/<int:info_id>/', NoticeDeleteView.as_view()),
+    path('main/', BoothsCheckView.as_view(), name='booths-check'),
 ]

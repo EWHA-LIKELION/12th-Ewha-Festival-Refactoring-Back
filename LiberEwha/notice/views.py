@@ -14,10 +14,11 @@ class NoticeCreateView(APIView):
             serializer = NoticeSerializer(
                 data=request.data, context={'request': request})
             if serializer.is_valid():
-                serializer.save(author=request.user)
+                serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
 
 
 class NoticeListView(APIView):

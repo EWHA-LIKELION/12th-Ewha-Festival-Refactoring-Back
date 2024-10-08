@@ -17,28 +17,39 @@ class MainPageView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-        if request.user.is_authenticated:
+        user = request.user
+        if user.is_authenticated:
             # 로그인한 사용자라면 스크랩한 항목을 포함해서 보여줌
             user_scraped_booths = Booth_scrap.objects.filter(
-                user=request.user).values_list('booth', flat=True)
+                user=user, booth__is_show=False).values_list('booth', flat=True)
             user_scraped_menus = Menu_scrap.objects.filter(
-                user=request.user).values_list('menu__booth', flat=True)
+                user=user).values_list('menu', flat=True)
             user_scraped_shows = Booth_scrap.objects.filter(
-                user=request.user, booth__is_show=True).values_list('booth', flat=True)
+                user=user, booth__is_show=True).values_list('booth', flat=True)
 
-            booths = Booth.objects.exclude(
+            booths = Booth.objects.filter(
                 id__in=user_scraped_booths).order_by('id')[:5]
-            shows = Show.objects.exclude(
+            menus = Menu.objects.filter(
+                id__in=user_scraped_menus).order_by('id')[:5]
+            shows = Show.objects.filter(
                 id__in=user_scraped_shows).order_by('id')[:5]
 
-            serializer = MainPageSerializer(booths, many=True)
-            return Response({'booths': serializer.data}, status=200)
+            booth_serializer = MainPageBoothSerializer(booths, many=True)
+            menu_serializer = MainPageMenuSerializer(menus, many=True)
+            show_serializer = MainPageBoothSerializer(shows, many=True)
+
+            return Response({
+                'booths': booth_serializer.data,
+                'menus': menu_serializer.data,
+                'shows': show_serializer.data
+                }, status=200)
         else:
             # 로그인하지 않은 사용자
             booths = Booth.objects.filter(is_show=False).order_by('id')[:5]
+            menus = Menu.objects.filter(is_soldout=False).order_by('id')[:5]
             shows = Show.objects.filter(is_show=True).order_by('id')[:5]
 
-            serializer = MainPageSerializer(booths, many=True)
+            serializer = MainPageSerializer(menus, many=True)
             return Response({'booths': serializer.data}, status=200)
 
 
@@ -86,6 +97,11 @@ class SearchView(APIView):
         booth_data = SearchResultSerializer(booth_results, many=True).data
         menu_data = SearchResultSerializer(menu_results, many=True).data
         notice_data = SearchResultSerializer(notice_results, many=True).data
+
+        for booth in booth_data:
+            booth_id = booth['id']
+            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+            booth['is_scraped'] = is_scraped
 
         return Response({
             'booths': booth_data,

@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-u+(c3rclyj3r1ml$1_@h3bns@*73gv*ip++f@fj4*aa06-kl#3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['Liberewha.pythonanywhere.com']
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'rest_auth',
+
+    'corsheaders',
 
     'django.contrib.sites',
     'allauth',
@@ -64,6 +66,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,6 +75,28 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware'
+]
+
+CORS_ORIGIN_ALLOW_ALL=True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (  #<-실제 요청에 허용되는 HTTP 동사 리스트
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 ROOT_URLCONF = 'LiberEwha.urls'

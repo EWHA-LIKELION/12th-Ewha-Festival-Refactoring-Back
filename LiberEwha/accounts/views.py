@@ -6,12 +6,12 @@ from .models import *
 from .serializers import *
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from django.shortcuts import redirect    
-from rest_framework_simplejwt.tokens import AccessToken          
-from allauth.socialaccount.providers.kakao import views as kakao_views 
-import requests                       
-from django.shortcuts import redirect 
-from .models import User  
+from django.shortcuts import redirect
+from rest_framework_simplejwt.tokens import AccessToken
+from allauth.socialaccount.providers.kakao import views as kakao_views
+import requests
+from django.shortcuts import redirect
+from .models import User
 from django.http import JsonResponse
 import jwt, logging
 
@@ -39,14 +39,14 @@ class LoginView(views.APIView):
             return Response({'message': '로그인 성공', 'data': serializer.validated_data})
         return Response({'message': '로그인 실패', 'error': serializer.errors})
 
-# code 요청
+class UsernameCheckView(views.APIView):
+    def post(self, request):
+        serializer = UsernameCheckSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response({'message': '사용 가능한 아이디입니다.'}, status=status.HTTP_200_OK)
+        return Response({'message': '아이디 중복', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-# def kakao_login(request):
-#     app_rest_api_key = '41c26ffbb480fe0fe222568af308ede8'
-#     redirect_uri = "http://127.0.0.1:8000" + "/accounts/login/kakao/callback/"
-#     return redirect(
-#         f"https://kauth.kakao.com/oauth/authorize?client_id={app_rest_api_key}&redirect_uri={redirect_uri}&response_type=code"
-#     )
+
 
 class KakaoLoginView(views.APIView):
     def get(self, request):
@@ -55,7 +55,7 @@ class KakaoLoginView(views.APIView):
         return redirect(
             f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
         )
-        
+
 class KakaoLoginCallbackView(views.APIView):
     SECRET_KEY = '1139200'
 

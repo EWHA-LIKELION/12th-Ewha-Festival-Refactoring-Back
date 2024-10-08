@@ -1,0 +1,16 @@
+asgiref
+certifi==2024.8.30
+charset-normalizer==3.3.2
+Django
+django-allauth
+django-rest-auth==0.9.5
+djangorestframework
+djangorestframework-simplejwt
+idna==3.10
+pillow
+PyJWT
+requests
+six
+sqlparse
+tzdata
+urllib3
