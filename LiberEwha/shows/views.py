@@ -62,6 +62,15 @@ class ShowsMainView(views.APIView): #부스 목록 페이지
 
         shows = shows.order_by("id") #오름차순 정렬
         serializer = ShowsMainSerializer(shows, many=True)
+
+        data = serializer.data
+
+        for booth in data:
+            booth_id = booth['id']
+            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+            booth['is_scraped'] = is_scraped
+
+
         return Response({'message': "공연 목록 불러오기 성공!",
-                         'data': serializer.data},
+                         'data': data},
                         status=HTTP_200_OK)

@@ -24,6 +24,11 @@ class BoothsDetailView(views.APIView):  # 부스 상세 페이지
         booth = get_object_or_404(Booth, pk=pk)
         serializer = BoothsDetailSerializer(booth)
         data = serializer.data
+        
+        for menu in data['menus']:
+            menu_id = menu['id']
+            is_scraped = Menu_scrap.objects.filter(user=request.user, menu_id=menu_id).exists()
+            menu['is_scraped'] = is_scraped
 
         booth = get_object_or_404(Booth, pk=pk)
         boothSerializer = BoothNoticeCountSerializer(booth)
@@ -65,6 +70,14 @@ class BoothsMainView(views.APIView):  # 부스 목록 페이지
 
         booths = booths.order_by("id")  # 오름차순 정렬
         serializer = BoothsMainSerializer(booths, many=True)
+
+        data = serializer.data
+
+        for booth in data:
+            booth_id = booth['id']
+            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+            booth['is_scraped'] = is_scraped
+
         return Response({'message': "부스 목록 불러오기 성공!",
                          'data': serializer.data},
                         status=HTTP_200_OK)

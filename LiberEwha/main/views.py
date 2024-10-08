@@ -32,6 +32,10 @@ class MainPageView(APIView):
                 id__in=user_scraped_shows).order_by('id')[:5]
 
             serializer = MainPageSerializer(booths, many=True)
+
+
+
+
             return Response({'booths': serializer.data}, status=200)
         else:
             # 로그인하지 않은 사용자
@@ -39,6 +43,8 @@ class MainPageView(APIView):
             shows = Show.objects.filter(is_show=True).order_by('id')[:5]
 
             serializer = MainPageSerializer(booths, many=True)
+            
+
             return Response({'booths': serializer.data}, status=200)
 
 
@@ -84,6 +90,13 @@ class SearchView(APIView):
 
         # 각 검색 결과에 대해 시리얼라이저 적용
         booth_data = SearchResultSerializer(booth_results, many=True).data
+
+        for booth in booth_data:
+            booth_id = booth['id']
+            is_scraped = Booth_scrap.objects.filter(user=request.user, booth_id=booth_id).exists()
+            booth['is_scraped'] = is_scraped
+
+
         menu_data = SearchResultSerializer(menu_results, many=True).data
         notice_data = SearchResultSerializer(notice_results, many=True).data
 
