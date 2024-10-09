@@ -100,7 +100,7 @@ class ManageMenuView(views.APIView):
         if not request.user.is_authenticated:
             return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
 
-        booth = get_object_or_404(Booth, booth__id=booth_id)
+        booth = get_object_or_404(Booth, id=booth_id)
 
         # 부스의 user가 내가 맞는지
         if request.user != booth.user:
@@ -122,7 +122,7 @@ class ManageMenuView(views.APIView):
         if not request.user.is_authenticated:
             return Response({"message": "로그인이 필요합니다."}, status=HTTP_400_BAD_REQUEST)
 
-        booth = get_object_or_404(Booth, booth__id=booth_id)
+        booth = get_object_or_404(Booth, id=booth_id)
 
         # 부스의 user가 내가 맞는지
         if request.user != booth.user:
